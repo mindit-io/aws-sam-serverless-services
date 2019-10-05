@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: "Different options for implementing rest services with AWS API Gateway\
+  \ and Lambda functions. \n"
+Globals:
+  Function:
+    Timeout: 20
+Resources:
+  EchoLpiApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://mindit.io/3ab38c56655d2f591e231e1936907411
+      Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+      Runtime: java8
+      MemorySize: 256
+      Events:
+        Request:
+          Type: Api
+          Properties:
+            Path: /echo/lpi
+            Method: post
+  EchoLiApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: Basic AWS Api Gateway
+      StageName: Prod
+      TracingEnabled: true
+  EchoLiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: post
+      AuthorizationType: NONE
+      ResourceId:
+        Fn::GetAtt:
+        - EchoLiApi
+        - RootResourceId
+      RestApiId:
+        Ref: EchoLiApi
+  EchoLiFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://mindit.io/de68eb00b3854162189a41804876a0a3
+      Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+      Runtime: java8
+      MemorySize: 256
+      Events:
+        Request:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: EchoLiApi
+            Path: /echo/li
+            Method: post
+Outputs:
+  InfoFunctionApi:
+    Description: API Gateway endpoint URL for EchoSimple
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/echo/simple/

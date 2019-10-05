@@ -29,7 +29,7 @@ public class EchoHandler implements RequestHandler<Object, Object> {
 
     public Object handleRequest(final Object input, final Context context) {
 
-        logger.info("EchoHandler invoked");
+        logger.info("EchoHttpHandler invoked");
 
         Map<String, String> headers = new HashMap<>();
             headers.put("Content-Type", "application/json");

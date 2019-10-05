@@ -1,0 +1,269 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Different options for implementing rest services with AWS API Gateway and Lambda functions. 
+
+Globals:
+  Function:
+    Timeout: 20
+
+
+Resources:
+
+    EchoLpiApi:
+      Type: AWS::Serverless::Function 
+      Properties:
+        CodeUri: EchoFunction
+        Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+        Runtime: java8
+        MemorySize: 256
+        Events:
+          Request:
+            Type: Api
+            Properties:
+              Path: /echo/lpi
+              Method: post
+
+    ##################################
+
+
+    EchoLiApi:
+      Type: AWS::Serverless::Api
+      Properties:
+        Name: Basic AWS Api Gateway
+        StageName: Prod
+        TracingEnabled: True
+
+    EchoLiMethod:
+      Type: AWS::ApiGateway::Method
+      Properties: 
+        HttpMethod: post
+        AuthorizationType: NONE
+        ResourceId: !GetAtt 
+          - EchoLiApi
+          - RootResourceId
+        RestApiId: !Ref EchoLiApi
+
+    EchoLiFunc:
+      Type: AWS::Serverless::Function 
+      Properties:
+        CodeUri: EchoFunction
+        Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+        Runtime: java8
+        MemorySize: 256
+        Events:
+          Request:
+            Type: Api
+            Properties:
+              RestApiId: !Ref EchoLiApi
+              Path: /echo/li
+              Method: post
+
+
+
+    # EchoWithValidationRV:
+    #   Type: AWS::ApiGateway::RequestValidator
+    #   Properties: 
+    #     Name: "Input Validator"
+    #     RestApiId: !Ref EchoWithValidationAPI
+    #     ValidateRequestBody: true
+    #     ValidateRequestParameters: false
+    
+    # EchoWithValidationMethod:
+    # Type: AWS::ApiGateway::Method
+    # Properties: 
+    #   HttpMethod: post
+    #   RequestModels: 
+    #     - "body" : "Inventor"
+    #   RequestValidatorId: !Ref: EchoWithValidationRV
+    #   ResourceId: !GetAtt EchoWithValidationAPI 
+    #   RestApiId: !Ref EchoWithValidationAPI
+              
+
+    # EchoWithValidationFunction:
+    #   Type: AWS::Serverless::Function 
+    #   Properties:
+    #       CodeUri: EchoFunction
+    #       Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+    #       Runtime: java8
+    #       MemorySize: 256
+    #       Events:
+    #           PageRequest:
+    #             Type: Api 
+    #             Properties:
+    #               RestApiId: 
+    #                 Ref: EchoWithValidationAPI
+    #               Path: /process
+    #               Method: post
+    #               RequestModel:
+    #                 Model: Inventor
+    #                 Required: true
+    
+    ##################################
+
+
+    # EchoWithValidationAPI:
+    #   Type: AWS::Serverless::Api
+    #   Properties:
+    #     Name: Basic AWS Api Gateway
+    #     StageName: Prod
+    #     TracingEnabled: True
+    #     Models: 
+    #       Inventor:
+    #         type: object
+    #         required:
+    #           - name
+    #           - wiki
+    #         properties:
+    #           name:
+    #             type: string
+    #           wiki:
+    #             type: string
+    #           knownFor:
+    #             type: string
+
+    # EchoWithValidationRV:
+    #   Type: AWS::ApiGateway::RequestValidator
+    #   Properties: 
+    #     Name: "Input Validator"
+    #     RestApiId: !Ref EchoWithValidationAPI
+    #     ValidateRequestBody: true
+    #     ValidateRequestParameters: false
+    
+    # EchoWithValidationMethod:
+    # Type: AWS::ApiGateway::Method
+    # Properties: 
+    #   HttpMethod: post
+    #   RequestModels: 
+    #     - "body" : "Inventor"
+    #   RequestValidatorId: !Ref: EchoWithValidationRV
+    #   ResourceId: !GetAtt EchoWithValidationAPI 
+    #   RestApiId: !Ref EchoWithValidationAPI
+              
+
+    # EchoWithValidationFunction:
+    #   Type: AWS::Serverless::Function 
+    #   Properties:
+    #       CodeUri: EchoFunction
+    #       Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+    #       Runtime: java8
+    #       MemorySize: 256
+    #       Events:
+    #           PageRequest:
+    #             Type: Api 
+    #             Properties:
+    #               RestApiId: 
+    #                 Ref: EchoWithValidationAPI
+    #               Path: /process
+    #               Method: post
+    #               RequestModel:
+    #                 Model: Inventor
+    #                 Required: true
+    
+    ##################################
+
+
+    # BasicAWSApiGateway:
+    #   Type: AWS::Serverless::Api
+    #   Properties:
+    #     Name: Basic AWS Api Gateway
+    #     StageName: Prod
+    #     TracingEnabled: True
+    #     Models: 
+    #       UrlRequest:
+    #         type: object
+    #         required:
+    #           - url
+    #           - schema
+    #         properties:
+    #           url:
+    #             type: string
+    #           schema:
+    #             type: string
+
+    # BasicAWSApiGatewayValidator:
+    #   Type: AWS::ApiGateway::RequestValidator
+    #   Properties: 
+    #     Name: "Input Validator"
+    #     RestApiId: !Ref BasicAWSApiGateway
+    #     ValidateRequestBody: true
+    #     ValidateRequestParameters: true
+    
+    # BasicAWSApiGatewayMethod:
+    # Type: AWS::ApiGateway::Method
+    # Properties: 
+    #   HttpMethod: post
+    #   RequestModels: 
+    #     Key : Value
+    #   RequestParameters: 
+    #     Key : Value
+    #   RequestValidatorId: !Ref: BasicAWSApiGatewayValidator
+    #   ResourceId: !GetAtt BasicAWSApiGateway 
+    #   RestApiId: !Ref BasicAWSApiGateway
+              
+
+    # InfoFunction:
+    #   Type: AWS::Serverless::Function 
+    #   Properties:
+    #     CodeUri: CrawlerFunction
+    #     Handler: com.datahornet.nebula.aws.handler.InfoHandler::handleRequest
+    #     Runtime: java8
+    #     Events:
+    #       PageRequest:
+    #         Type: Api
+    #         Properties:
+    #           Path: /info
+    #           Method: get
+
+    # PageProcessFunction:
+    #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    #   Properties:
+    #       CodeUri: CrawlerFunction
+    #       Handler: com.datahornet.nebula.aws.handler.PageProcessHandler::handleRequest
+    #       Runtime: java8
+    #       MemorySize: 256
+    #       Events:
+    #           PageRequest:
+    #             Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+    #             Properties:
+    #               RestApiId: 
+    #                 Ref: BasicAWSApiGateway
+    #               Path: /process
+    #               Method: post
+    #               RequestModel:
+    #                 Model: UrlRequest
+    #                 Required: true
+
+    # DynamoDBTable:
+    #     Type: 'AWS::DynamoDB::Table'
+    #     Properties:
+    #         StreamSpecification:
+    #             StreamViewType: NEW_AND_OLD_IMAGES
+    #         ProvisionedThroughput:
+    #             WriteCapacityUnits: 5
+    #             ReadCapacityUnits: 5
+    #         AttributeDefinitions:
+    #             - AttributeName: url
+    #               AttributeType: S
+    #         KeySchema:
+    #             - AttributeName: url 
+    #               KeyType: HASH
+                  
+
+Outputs:
+  InfoFunctionApi:
+    Description: "API Gateway endpoint URL for EchoSimple"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/echo/simple/"
+  # InfoFunctionApi:
+  #   Description: "API Gateway endpoint URL for Info Function"
+  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/info/"
+  # PageProcessApi:
+  #   Description: "API Gateway endpoint URL for Info Function"
+  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/process/"
+  # PageProcessFunction:
+  #   Description: "Page Process Lambda Function ARN"
+  #   Value: !GetAtt PageProcessFunction.Arn
+  # DynamoDBTable:
+  #   Description: "Dynamo DB table storing URL status"
+  #   Value: !GetAtt DynamoDBTable.Arn
+
