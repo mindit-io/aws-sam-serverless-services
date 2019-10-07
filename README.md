@@ -1,4 +1,4 @@
-# Sample REST services using AWS Serverless Application Model 
+# Sample REST deployments using AWS Serverless Application Model 
 
 [AWS SAM](https://github.com/awslabs/serverless-application-model) it's a great framework to start building [serverless applications](https://martinfowler.com/articles/serverless.html). With just a few lines of configuration, you can define the application you want and deploy it.
 
@@ -12,8 +12,11 @@ Currently it holds sample templates for:
 
 | Deployment Scenario | SAM AWS template |
 | ------------------- | ---------------- |
-|  | [template-lpi.yaml](template-lpi.yaml)
-
+| Lambda Proxy Integration | [template-lpi.yaml](template-lpi.yaml)
+| Lambda Proxy Integration with HTTP catch all | [template-lpi-catch-all.yaml](template-catch-all.yaml)
+| Lambda Proxy Integration with body content validation | [template-lpi-validate.yaml](template-lpi-validate.yaml)
+| Lambda Integration | [template-li.yaml](template-lpi.yaml)
+| Lambda Integration with body content validation| [template-li-validate.yaml](template-lpi.yaml)
 
 In the future the list of sample templates will be extended with new deployment scenarios.  
 
