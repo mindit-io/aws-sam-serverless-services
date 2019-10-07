@@ -1,7 +1,29 @@
-# aws-sam-serverless-services
-Different options for implementing REST services using AWS Serverless Application Model.
+# Sample REST services using AWS Serverless Application Model 
 
-## Overview 
+[AWS SAM](https://github.com/awslabs/serverless-application-model) it's a great framework to start building [serverless applications](https://martinfowler.com/articles/serverless.html). With just a few lines of configuration, you can define the application you want and deploy it.
+
+[AWS SAM](https://github.com/awslabs/serverless-application-model) hides all the boilerplate configurations needed if building directly using [AWS CloudFormation](https://aws.amazon.com/cloudformation/) resources and properties. 
+
+While this is great for a quick start, it can become very quickly frustrating when you want to implement slightly more complex functionalities, such as validation, authorization, trasnformation, etc.
+
+This repository is intended as a storage for various AWS SAM templates, covering different deploymens scenarios. 
+
+Currently it holds sample templates for:
+
+| Deployment Scenario | SAM AWS template |
+| ------------------- | ---------------- |
+|  | [template-lpi.yaml](template-lpi.yaml)
+
+
+In the future the list of sample templates will be extended with new deployment scenarios.  
+
+It is recommened to understand 
+
+
+## Prerequisites 
+
+
+
 ## How to deploy 
 ### Prerequisites 
 
