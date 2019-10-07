@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Example of using lambda proxy integration. 
+
+Globals:
+  Function:
+    Timeout: 20
+
+
+Resources:
+
+    EchoLpiApi:
+      Type: AWS::Serverless::Function 
+      Properties:
+        FunctionName: echo-lpi-catch-all
+        CodeUri: EchoFunctionJS
+        Handler: app.lambdaHandler
+        Runtime: nodejs10.x
+        Events:
+          ProxyApiGreedy:
+            Type: Api
+            Properties:
+              Path: /echo/{proxy+}
+              Method: ANY

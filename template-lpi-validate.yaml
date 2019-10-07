@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Different options for implementing rest services with AWS API Gateway and Lambda functions. 
+
+Globals:
+  Function:
+    Timeout: 20
+
+
+Resources:
+
+    EchoWithValidationAPI:
+      Type: AWS::Serverless::Api
+      Properties:
+        Name: echo-lpi-validate
+        StageName: Prod
+        TracingEnabled: True
+        Models: 
+          Inventor:
+            type: object
+            required:
+              - name
+              - wiki
+            properties:
+              name:
+                type: string
+              wiki:
+                type: string
+              knownFor:
+                type: string
+
+              
+
+    EchoWithValidationFunction:
+      Type: AWS::Serverless::Function 
+      Properties:
+        CodeUri: EchoFunctionJS
+        Handler: app.lambdaHandler
+        Runtime: nodejs10.x
+        Events:
+          Request:
+            Type: Api 
+            Properties:
+              RestApiId: 
+                Ref: EchoWithValidationAPI
+              Path: /echo
+              Method: post
+              RequestModel:
+                Model: Inventor
+                Required: true
+    
+Outputs:
+
+  ApiURL:
+    Description: "API endpoint URL for Prod environment"
+    Value: !Sub "https://${EchoWithValidationAPI}.execute-api.${AWS::Region}.amazonaws.com/prod/echo"
+

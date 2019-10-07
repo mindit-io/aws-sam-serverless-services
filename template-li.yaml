@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Different options for implementing rest services with AWS API Gateway and Lambda functions. 
+
+Globals:
+  Function:
+    Timeout: 20
+
+
+Resources:
+
+
+    EchoLiApi:
+      Type: AWS::Serverless::Api
+      Properties:
+        Name: echo-li
+        StageName: Prod
+        TracingEnabled: True
+        DefinitionBody:
+          swagger: "2.0"
+          info:
+            title: "EchoAPI"
+          paths:
+            /echo:
+              post:
+                responses:
+                  "200": 
+                    description: "200 response"
+                x-amazon-apigateway-integration:
+                  uri:
+                    Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${EchoLiFunc.Arn}/invocations
+                  responses:
+                    default:
+                      statusCode: 200
+                  passthroughBehavior: when_no_match
+                  httpMethod: POST
+                  type: AWS
+                x-amazon-apigateway-any-method:
+                  produces: application/json
+
+
+    EchoLiFunc:
+      Type: AWS::Serverless::Function 
+      Properties:
+        CodeUri: EchoFunctionJS
+        Handler: app.lambdaHandlerStraight
+        Runtime: nodejs10.x
+        Events:
+          Request:
+            Type: Api
+            Properties:
+              RestApiId: !Ref EchoLiApi
+              Path: /echo
+              Method: post
+
+
+

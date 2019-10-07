@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Example of using lambda proxy integration. 
+
+Globals:
+  Function:
+    Timeout: 20
+
+Resources:
+
+    EchoLpiApi:
+      Type: AWS::Serverless::Function 
+      Properties:
+        FunctionName: echo-lpi
+        CodeUri: EchoFunctionJS
+        Handler: app.lambdaHandler
+        Runtime: nodejs10.x
+        # If you need a Java function (should replace in other configs as well)
+        # CodeUri: EchoFunction
+        # Handler: io.mindit.aws.handler.EchoHandler::handleRequest
+        # Runtime: java8
+        # MemorySize: 256
+        Events:
+          Request:
+            Type: Api
+            Properties:
+              Path: /echo
+              Method: post
