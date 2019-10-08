@@ -1,4 +1,6 @@
-# Sample REST deployments using AWS Serverless Application Model 
+# AWS SAM sample templates for serverless REST deployments
+
+![](images/mindit-aws-serverless.jpg)
 
 [AWS SAM](https://github.com/awslabs/serverless-application-model) it's a great framework to start building [serverless applications](https://martinfowler.com/articles/serverless.html). With just a few lines of configuration, you can define the application you want and deploy it.
 
@@ -41,13 +43,14 @@ Following those installations instructions you will end-up with:
 Any of the examples can be deployed using the following commands:
 ``` bash
 sam build -t template.yaml  
-sam package     --template-file template.yaml --output-template-file packaged.yaml     --s3-bucket mindit.io 
+sam package --template-file template.yaml --output-template-file packaged.yaml     --s3-bucket your_bucket_name 
 sam deploy     --template-file packaged.yaml     --stack-name api-echo     --capabilities CAPABILITY_IAM
 
 ```
 where:
 * **template.yaml** can be replaced with any of the sample templates file names
-* **api-echo** can be replaced with any name that you want to be assigned to the deployed API  
+* **api-echo** can be replaced with any name that you want to be assigned to the deployed API 
+* **your_bucket_name** with the bucket name created when you've installed SAM CLI
 
 ## API Functionality
 
@@ -70,11 +73,91 @@ with:
         MemorySize: 256
 ``` 
 
+The simplest way to test the output of of the REST endpoint is by accessing the service in the API Gateway in the AWS console:
+TODO: include snapshot with API Gateway. 
+
+
+
 ## Lambda Proxy Integration 
 Template file: [template-lpi.yaml](template-lpi.yaml)
 
+In a Lambda proxy integration, the entire client request is sent to the backend Lambda function as is. API Gateway maps the entire client request to the input event parameter of the backend Lambda function. The Lambda function's output, including status code, headers, and body, is returned to the client as is. For many use cases, this is the preferred integration type. 
+
+With a Lambda proxy integration, API Gateway requires the backend Lambda function to return output according to the following JSON format:
+``` json
+{
+    statusCode: "...", // a valid HTTP status code
+    headers: {
+        custom-header: "..." // any API-specific custom header
+    },
+    body: "...", // a JSON string.
+    isBase64Encoded: true|false // for binary support
+}
+
+
+``` 
+
+Table below shows the behaivour of a serverless endpoint implemented using Lambda Proxy Integration:
+
+| Request Type | Request Body | Response Body |
+| ------------ | ------------ | ------------- |
+| POST | TODO: add sample request | TODO: add sample response |
+
+Template format for this kind of integration is very simple. The entire configuration can be done by using just a single resource: 
+ 
+``` yaml
+Resources:
+    EchoLpiApi:
+      Type: AWS::Serverless::Function 
+      Properties:
+        FunctionName: echo-lpi
+        CodeUri: EchoFunctionJS
+        Handler: app.lambdaHandler
+        Runtime: nodejs10.x
+        Events:
+          Request:
+            Type: Api
+            Properties:
+              Path: /echo
+              Method: post
+```      
+
+
 ## Lambda Proxy Integration with HTTP catch all 
 Template file: [template-lpi-catch-all.yaml](template-catch-all.yaml)
+
+This method is applicable when you wish to use an API Gateway as a pure proxy, with little to no intervention on the incoming request. The business logic of the exposed API endpoint is comprised entirely within the Lambda function, which is wholly responsible for handling and responding to the request
+When the backend web server opens more resources for public access, the client can use these new resources with the same API setup. But this requiers that the service developer to communicate clearly to the client developer which are the
+new accesible resources, and the supported operations.
+
+Table below shows the behaivour of a serverless endpoint implemented using Lambda Proxy Integration with HTTP catch all:
+
+| Request Type | Request Body | Response Body |
+| ------------ | ------------ | ------------- |
+| POST | TODO: add sample request | TODO: add sample response |
+| GET | TODO: add sample request | TODO: add sample response |
+| PUT | TODO: add sample request | TODO: add sample response |
+
+
+The sam AWS template configuration has to mention to the resource path **{proxy+}** and to include the catch-all **ANY** verb for the HTTP method.
+``` yaml
+Resources:
+
+    EchoLpiApi:
+      Type: AWS::Serverless::Function 
+      Properties:
+        FunctionName: echo-lpi-catch-all
+        CodeUri: EchoFunctionJS
+        Handler: app.lambdaHandler
+        Runtime: nodejs10.x
+        Events:
+          ProxyApiGreedy:
+            Type: Api
+            Properties:
+              Path: /echo/{proxy+}
+              Method: ANY
+
+```
 
 ## Lambda Proxy Integration with body content validation 
 Template file: [template-lpi-validate.yaml](template-lpi-validate.yaml)
