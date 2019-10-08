@@ -1,6 +1,6 @@
+![mindit.io](images/mindit-aws-serverless.jpg)
 # AWS SAM sample templates for serverless REST deployments
 
-![](images/mindit-aws-serverless.jpg)
 
 [AWS SAM](https://github.com/awslabs/serverless-application-model) it's a great framework to start building [serverless applications](https://martinfowler.com/articles/serverless.html). With just a few lines of configuration, you can define the application you want and deploy it.
 
@@ -86,12 +86,12 @@ In a Lambda proxy integration, the entire client request is sent to the backend
 With a Lambda proxy integration, API Gateway requires the backend Lambda function to return output according to the following JSON format:
 ``` json
 {
-    statusCode: "...", // a valid HTTP status code
-    headers: {
-        custom-header: "..." // any API-specific custom header
+    "statusCode": "...", // a valid HTTP status code
+    "headers": {
+        "custom-header": "..." // any API-specific custom header
     },
-    body: "...", // a JSON string.
-    isBase64Encoded: true|false // for binary support
+    "body": "...", // a JSON string.
+    "isBase64Encoded": true|false // for binary support
 }
 
 
