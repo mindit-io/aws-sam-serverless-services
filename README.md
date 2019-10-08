@@ -49,7 +49,7 @@ where:
 * **template.yaml** can be replaced with any of the sample templates file names
 * **api-echo** can be replaced with any name that you want to be assigned to the deployed API  
 
-## Samples content
+## API Functionality
 
 All RESTs created by the sample templates are simple echo services. In general, they return the same information that is passeed in the body request. Particular implementation details are mentioned for each scenario. 
 
