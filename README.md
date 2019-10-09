@@ -6,9 +6,9 @@
 
 [AWS SAM](https://github.com/awslabs/serverless-application-model) hides all the boilerplate configurations needed if building directly using [AWS CloudFormation](https://aws.amazon.com/cloudformation/) resources and properties. 
 
-While this is great for a quick start, it can become very quickly frustrating when you want to implement slightly more complex functionalities, such as validation, authorization, trasnformation, etc.
+While this is great for a quick start, it can become very quickly frustrating when you want to implement slightly more complex functionalities, such as validation, authorization, transformation, etc.
 
-This repository is intended as a storage for various AWS SAM templates, covering different deploymens scenarios. 
+This repository is intended as a storage for various AWS SAM templates, covering different deployments scenarios. 
 
 Currently it holds sample templates for:
 
@@ -74,7 +74,8 @@ with:
 ``` 
 
 The simplest way to test the output of of the REST endpoint is by accessing the service in the API Gateway in the AWS console:
-TODO: include snapshot with API Gateway. 
+
+![AWS api gateway](images/amazon-api-gateway.jpg)
 
 
 
@@ -86,16 +87,17 @@ In a Lambda proxy integration, the entire client request is sent to the backend
 With a Lambda proxy integration, API Gateway requires the backend Lambda function to return output according to the following JSON format:
 ``` json
 {
-    "statusCode": "...", // a valid HTTP status code
+    "statusCode": "...", // 
     "headers": {
         "custom-header": "..." // any API-specific custom header
     },
     "body": "...", // a JSON string.
     "isBase64Encoded": true|false // for binary support
 }
+```
+where:
+* statusCode =  a valid HTTP status code
 
-
-``` 
 
 Table below shows the behaivour of a serverless endpoint implemented using Lambda Proxy Integration:
 
