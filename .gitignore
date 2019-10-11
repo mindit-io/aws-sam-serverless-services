@@ -1,5 +1,6 @@
 EchoFunction/target
 EchoFunctionJS/node_modules
 EchoFunctionJS/package-lock.json
+EchoFunction/.*
 .aws-sam
 packaged.yaml

@@ -87,23 +87,24 @@ In a Lambda proxy integration, the entire client request is sent to the backend
 With a Lambda proxy integration, API Gateway requires the backend Lambda function to return output according to the following JSON format:
 ``` json
 {
-    "statusCode": "...", // 
+    "statusCode": "...", 
     "headers": {
-        "custom-header": "..." // any API-specific custom header
+        "custom-header": "..." 
     },
-    "body": "...", // a JSON string.
-    "isBase64Encoded": true|false // for binary support
+    "body": "...", 
+    "isBase64Encoded": "..."
 }
 ```
 where:
 * statusCode =  a valid HTTP status code
+* custom-header = custom headers that you want to be included in the response 
+* body = body of the response as a JSON string
+* isBase64Encoded = true/false whether binary support should be included 
 
 
-Table below shows the behaivour of a serverless endpoint implemented using Lambda Proxy Integration:
+Image below shows the behaivour of a serverless endpoint implemented using Lambda Proxy Integration. Entire client request (including headers, body and parameters) is mapped to the event object send to the function. Our lambda function returns the object that it receives in the request:
 
-| Request Type | Request Body | Response Body |
-| ------------ | ------------ | ------------- |
-| POST | TODO: add sample request | TODO: add sample response |
+![mindit.io](images/echo-lpi-test.jpg)
 
 Template format for this kind of integration is very simple. The entire configuration can be done by using just a single resource: 
  
@@ -132,13 +133,8 @@ This method is applicable when you wish to use an API Gateway as a pure proxy, w
 When the backend web server opens more resources for public access, the client can use these new resources with the same API setup. But this requiers that the service developer to communicate clearly to the client developer which are the
 new accesible resources, and the supported operations.
 
-Table below shows the behaivour of a serverless endpoint implemented using Lambda Proxy Integration with HTTP catch all:
-
-| Request Type | Request Body | Response Body |
-| ------------ | ------------ | ------------- |
-| POST | TODO: add sample request | TODO: add sample response |
-| GET | TODO: add sample request | TODO: add sample response |
-| PUT | TODO: add sample request | TODO: add sample response |
+API Gateway is passing the "httpMethod" action to the lambda function:
+![mindit.io](images/echo-lpi-catchall-test.png)
 
 
 The sam AWS template configuration has to mention to the resource path **{proxy+}** and to include the catch-all **ANY** verb for the HTTP method.
@@ -163,6 +159,8 @@ Resources:
 
 ## Lambda Proxy Integration with body content validation 
 Template file: [template-lpi-validate.yaml](template-lpi-validate.yaml)
+
+API gateways offers 
 
 ## Lambda Custom Integration 
 Template file: [template-li.yaml](template-lpi.yaml)
