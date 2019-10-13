@@ -160,7 +160,54 @@ Resources:
 ## Lambda Proxy Integration with body content validation 
 Template file: [template-lpi-validate.yaml](template-lpi-validate.yaml)
 
-API gateways offers 
+Very often, instead of writing your validation code into the lambda function it is preferable to let the API Gateway manages that for you. You can configure API Gateway to perform basic validation of an API request before proceeding with the integration request. When the validation fails, API Gateway immediately fails the request, returns a 400 error response to the caller.
+
+Figure below shows the results of the validation performed on a incomplete body request:
+![mindit.io](images/echo-lpi-validate-test.jpg)
+
+API Gateway can validate both:
+* request parameters 
+* request payload 
+
+SAM AWS template offers support to enable validation for lambda proxy integration by using "Request Model" or "Request Parameter" properties of the object describing an event source with type Api. Request model has to be configured in "Models" property of the "AWS::Serverless::API" resource:
+``` yaml
+EchoWithValidationAPI:
+      Type: AWS::Serverless::Api
+      Properties:
+       ...
+        Models: 
+          Inventor:
+            type: object
+            required:
+              - name
+              - wiki
+            properties:
+              name:
+                type: string
+              wiki:
+                type: string
+              knownFor:
+                type: string
+
+              
+
+    EchoWithValidationFunction:
+      Type: AWS::Serverless::Function 
+      Properties:
+       ...
+        Events:
+          Request:
+            Type: Api 
+            Properties:
+              RestApiId: 
+                Ref: EchoWithValidationAPI
+              RequestModel:
+                Model: Inventor
+                Required: true
+    
+```
+<font color="red">Note that, even that this example is similar with the <a href="https://github.com/awslabs/serverless-application-model/tree/master/examples/2016-10-31/api_request_model"> awslabs/serverless-application-model </a>  one, there seems to be an issue with this configuration and you still need to manually activate the validator in the API Gateway console:</font>
+![mindit.io](images/lpi-set-validator.png)
 
 ## Lambda Custom Integration 
 Template file: [template-li.yaml](template-lpi.yaml)
