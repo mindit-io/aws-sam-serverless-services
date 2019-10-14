@@ -212,8 +212,118 @@ Note that, even that this example is similar with the [awslabs/serverless-applic
 ## Lambda Custom Integration 
 Template file: [template-li.yaml](template-lpi.yaml)
 
-Lambda proxy integration are very easy to set-up, but it offers you less control over the workflow. If you target a better separation of responsabilities between the integration layer and functional part of your application, you should look into utilizing  need to perform validations, transformations     
-With Lambda Proxy Integration requests from the client are directly send to the lambda and responses are send back 
+Lambda proxy integration are very easy to set-up, but it offers you less control over the workflow. 
+
+If you target a better separation of responsibilities, between the integration layer and functional part of your application, you should look into utilizing  lambda custom integration.
+For example, lambda custom integration can be used to transform the request payload by using Velocity Template Language engine or to map response codes and messages the ones understood by the client application. 
+
+As shown in the figure below the API Gateway is not packaging the entire client request, rather (if no transformers are used) the body of the request is forwarded as is to the lambda function:
+![mindit.io](images/echo-li-test.png)
+
+
+If you want to use custom integration, you need to use swagger to specify the interface definition:
+``` yaml
+    EchoLiApi:
+      Type: AWS::Serverless::Api
+      Properties:
+        ...
+        DefinitionBody:
+          swagger: "2.0"
+          paths:
+            /echo:
+              post:
+                responses:
+                  "200": 
+                    description: "200 response"
+                x-amazon-apigateway-integration:
+                  uri:
+                    Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${EchoLiFunc.Arn}/invocations
+                  responses:
+                    default:
+                      statusCode: 200
+                  passthroughBehavior: when_no_match
+                  httpMethod: POST
+                  type: AWS
+                x-amazon-apigateway-any-method:
+                  produces: application/json
+
+
+    EchoLiFunc:
+      Type: AWS::Serverless::Function 
+      Properties:
+        ...
+        Events:
+          Request:
+            Type: Api
+            Properties:
+              RestApiId: !Ref EchoLiApi
+              Path: /echo
+              Method: post
+``` 
+
 
 ## Lambda Custom Integration with body content validation
 Template file: [template-li-validate.yaml](template-lpi.yaml)
+
+In case of custom integration the entire validation of the request should happen within the swagger definition:
+``` yaml
+Resources:
+
+
+    EchoLiApi:
+      Type: AWS::Serverless::Api
+      Properties:
+        Name: echo-li-validate
+        StageName: Prod
+        TracingEnabled: True
+        DefinitionBody:
+          swagger: "2.0"
+          info:
+            title: "EchoAPI"
+          x-amazon-apigateway-request-validators:
+            Validate Body: 
+              validateRequestBody: True
+              validateRequestParameters: False
+          paths:
+            /echo:
+              post:
+                consumes:
+                - "application/json"
+                produces:
+                - "application/json"
+                x-amazon-apigateway-request-validator: "Validate Body"
+                parameters:
+                - in: "body"
+                  name: "Inventor"
+                  required: true
+                  schema: 
+                    $ref: "#/definitions/Inventor"
+                responses:
+                  "200": 
+                    description: "200 response"
+                x-amazon-apigateway-integration:
+                  uri:
+                    Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${EchoLiFunc.Arn}/invocations
+                  responses:
+                    default:
+                      statusCode: 200
+                  passthroughBehavior: when_no_match
+                  httpMethod: POST
+                  type: AWS
+                x-amazon-apigateway-any-method:
+                  produces: application/json
+          definitions: 
+            Inventor:
+              description: "Inventor model"
+              type: "object"
+              required:
+                - "name"
+                - "wiki"
+              properties:
+                name:
+                  type: "string"
+                wiki:
+                  type: "string"
+                knownFor:
+                  type: "string"
+``` 
