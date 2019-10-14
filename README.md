@@ -206,11 +206,14 @@ EchoWithValidationAPI:
                 Required: true
     
 ```
-<font color="red">Note that, even that this example is similar with the <a href="https://github.com/awslabs/serverless-application-model/tree/master/examples/2016-10-31/api_request_model"> awslabs/serverless-application-model </a>  one, there seems to be an issue with this configuration and you still need to manually activate the validator in the API Gateway console:</font>
+Note that, even that this example is similar with the [awslabs/serverless-application-model](https://github.com/awslabs/serverless-application-model/tree/master/examples/2016-10-31/api_request_model) one, there seems to be an issue with this configuration and you still need to manually activate the validator in the API Gateway console:
 ![mindit.io](images/lpi-set-validator.png)
 
 ## Lambda Custom Integration 
 Template file: [template-li.yaml](template-lpi.yaml)
+
+Lambda proxy integration are very easy to set-up, but it offers you less control over the workflow. If you target a better separation of responsabilities between the integration layer and functional part of your application, you should look into utilizing  need to perform validations, transformations     
+With Lambda Proxy Integration requests from the client are directly send to the lambda and responses are send back 
 
 ## Lambda Custom Integration with body content validation
 Template file: [template-li-validate.yaml](template-lpi.yaml)
